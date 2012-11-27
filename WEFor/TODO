@@ -1,0 +1,27 @@
+Kolla upp hävstång.
+Vilka OrderCommands behöver vi?
+Vad är price slippage?
+
+Kolla med tobba så PositionController får en OrderApprover
+
+---------------------
+
+ForexDataIO - Vid error, kolla så connection uppdateras properly.
+
+Zoom ska anpassas efter period/tick bar size samt ha max/min gränser - OK
+
+Fixa så ForexDataFeed suppliar alla ticks och bars, dvs inte hoppar över några
+(t ex om updateInterval == 0) - OK
+ - Strategier ska endast kunna köras med en sådan feed
+
+Excludera weekends ur tickTableIndex - krångligt pga dst, funkar det som det är?
+
+Fix a simple graph window, exclude settings panel - OK
+
+Kolla att tiderna i grafen stämmer med JForex grafer, kan vara olika tidszoner. - OK
+
+FRÅGA JEVVE
+
+Eftersom jag loopar igenom alla tables för att se om ett requestat table finns, är det 
+bra att ha olika databaser for data av t ex olika periods?
+Svar:

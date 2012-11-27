@@ -1,0 +1,145 @@
+//	/**
+//	 * Returns a TickBarBuilder representing the TickBar as it would look if it
+//	 * was currently being built, treating the time given as the current time.
+//	 * 
+//	 * @param time the time to be treated as upper time limit of the returned
+//	 *            building tick bar
+//	 * @param tickBarSize the size of the returned tick bar
+//	 * @param offerSide the offer side of the returned tick bar
+//	 * @return a bar builder representing the bar as it would look if it was
+//	 *         currently being built, given the time as the current time
+//	 */
+//	public TickBarBuilder getBuildingTickBar(long time) {
+//		if (!(requester instanceof TickBarRequester)) {
+//			throw new ForexException(
+//					"The requester registered with provider is not a TickBarRequester");
+//		}
+//
+//		TickBarRequester requester = (TickBarRequester) this.requester;
+//
+//		TickBarBuilder builder = new TickBarBuilder(requester.getOfferSide());
+//
+//		ITick tick;
+//		do {
+//			tick = getPreviousTick(time);
+//
+//			if (tick == null)
+//				break;
+//
+//			builder.addTick(tick);
+//
+//			time = tick.getTime() - 1; // -1 to get previous tick
+//
+//		} while (io.getPreviousTicksCount(requester.getInstrument(), tick.getTime())
+//				% (requester.getTickBarSize().getSize() - 1) != 0);
+//
+//		if (builder.isOpen())
+//			return builder;
+//		else
+//			return null;
+//	}
+//
+//	/**
+//	 * Returns a list of all tick bars of specified offer side and of time on
+//	 * the interval [from, to]. That is, the first tick bar in the list will be
+//	 * the closest tick bar which getTime()-method returns a time lower than or
+//	 * equal to from. The last bar in the list will be the closest tick bar
+//	 * which getEndTime()-method returns a time higher than or equal to to.
+//	 * 
+//	 * An empty list is returned if no tick bars on the interval could be
+//	 * loaded.
+//	 * 
+//	 * @param offerSide the offer side of the tick bars
+//	 * @param from the beginning of the interval (inclusive)
+//	 * @param to the end of the interval (inclusive)
+//	 * @return a list of all bars of specified offer side and of time on the
+//	 *         interval [from, to]
+//	 * @throws IllegalArgumentException if from > to
+//	 */
+//	public ArrayList<ITickBar> getTickBars(long from, long to) {
+//		if (!(requester instanceof TickBarRequester)) {
+//			throw new ForexException(
+//					"The requester registered with provider is not a TickBarRequester");
+//		}
+//
+//		TickBarRequester requester = (TickBarRequester) this.requester;
+//
+//		LinkedList<ITick> previous = new LinkedList<ITick>();
+//		ArrayList<ITick> ticks = getTicks(from, to);
+//		LinkedList<ITick> upcoming = new LinkedList<ITick>();
+//
+//		// load previous
+//		while (io.getPreviousTicksCount(requester.getInstrument(), from)
+//				% (requester.getTickBarSize().getSize() - 1) != 0) {
+//
+//			ITick previousTick = getPreviousTick(from - 1);
+//
+//			if (previousTick == null) {
+//
+//				break;
+//
+//			} else {
+//
+//				previous.addFirst(previousTick);
+//				from = previousTick.getTime();
+//			}
+//		}
+//
+//		// load upcoming
+//		while (io.getPreviousTicksCount(requester.getInstrument(), to)
+//				% (requester.getTickBarSize().getSize() - 1) != 0) {
+//
+//			ITick upcomingTick = getUpcomingTick(to + 1);
+//
+//			if (upcomingTick == null) {
+//
+//				break;
+//
+//			} else {
+//
+//				upcoming.addLast(upcomingTick);
+//				to = upcomingTick.getTime();
+//			}
+//		}
+//
+//		ArrayList<ITickBar> ret = new ArrayList<ITickBar>();
+//		TickBarBuilder builder = new TickBarBuilder(requester.getOfferSide());
+//
+//		for (ITick tick : previous) {
+//
+//			builder.addTick(tick);
+//
+//			if (builder.getFormedElementsCount() == requester.getTickBarSize().getSize()) {
+//
+//				ret.add(builder.produceTickBar());
+//				builder.reset(requester.getOfferSide());
+//				builder.addTick(tick);
+//			}
+//		}
+//
+//		for (ITick tick : ticks) {
+//
+//			builder.addTick(tick);
+//
+//			if (builder.getFormedElementsCount() == requester.getTickBarSize().getSize()) {
+//
+//				ret.add(builder.produceTickBar());
+//				builder.reset(requester.getOfferSide());
+//				builder.addTick(tick);
+//			}
+//		}
+//
+//		for (ITick tick : upcoming) {
+//
+//			builder.addTick(tick);
+//
+//			if (builder.getFormedElementsCount() == requester.getTickBarSize().getSize()) {
+//
+//				ret.add(builder.produceTickBar());
+//				builder.reset(requester.getOfferSide());
+//				builder.addTick(tick);
+//			}
+//		}
+//
+//		return ret;
+//	}
