@@ -17,7 +17,7 @@ import com.dukascopy.api.Period;
  * 
  * @author Dennis Ekstrom
  */
-public class TradingIntermediator {
+public final class TradingIntermediator {
 
 	private static IEngine engine;
 	private static IHistory history;

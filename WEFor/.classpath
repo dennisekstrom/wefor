@@ -2,7 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="weforex"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="libs"/>
+	<classpathentry kind="lib" path="libs">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/WEFor/related stuff/JForex-API-2.6.49-javadocs.zip!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="libs/dds2-common-2.3.68.jar"/>
 	<classpathentry kind="lib" path="libs/greed-common-167.jar"/>
 	<classpathentry kind="lib" path="libs/JForex-API-2.6.49.jar"/>

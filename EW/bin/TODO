@@ -1,0 +1,48 @@
+Kolla så ticks har sama open, close, high och low
+Kolla så ticks alltid har volume=1
+
+Feed:
+- Ska informera StrategyController - onTick(O2GOfferTableRow)
+
+
+Vi ska ha en typ av listener: OffersListener
+	onOffer(OfferData offer);
+
+Klasser som implementerar OffersListener kan registreras hos OffersFeed:
+	OffersFeed.getInstance().registerListener(offersListener)
+
+OfferData - kan skapas från O2GOfferTableRow objekt
+
+O2GSession session = O2GTransport.createSession()
+O2GTableManager manager = session.getTableManager()
+O2GOffersTable offers = manager.getTable(O2GTableType.OFFERS)
+offers.subscribeUpdate(O2GTableUpdateType.UPDATE, offersListener)
+
+public interface OffersFeed {
+	public registerListener(OffersListener);
+	public removeListener(OffersListener);
+}
+
+public final class LiveOffersFeed implements IO2GTableListener, OffersFeed {
+	
+	private static OffersFeed instance;
+	
+	static {
+		instance = new OffersFeed();
+	}
+	
+	private OffersFeed() {}
+	
+	public OffersFeed getInstance() {
+		
+	}
+	
+	@Override 
+	public void onChanged(String rowID, O2GRow row) {
+		O2GOfferTableRow offers = (O2GOfferTableRow) row;
+		
+		// convert offers to OfferData instance
+		
+		// inform all listeners
+		
+}

@@ -80,14 +80,17 @@ public class Provider {
 	}
 
 	private Long getEndOfData(Period period) {
-		Long endOfStorage = io.getEndOfStorage(requester.getInstrument(), period);
+		Long endOfStorage = io.getEndOfStorage(requester.getInstrument(),
+				period);
 
 		if (endOfStorage != null && history != null) {
 
 			try {
 
-				return Math.max(endOfStorage, history.getStartTimeOfCurrentBar(
-						requester.getInstrument(), period));
+				return Math.max(
+						endOfStorage,
+						history.getStartTimeOfCurrentBar(
+								requester.getInstrument(), period));
 
 			} catch (JFException e) {
 				throw new ForexException(e.getMessage());
@@ -101,8 +104,8 @@ public class Provider {
 		Instrument instrument = requester.getInstrument();
 
 		if (history == null
-				|| tableIndex <= ForexDataIO.getTickTableIndex(io.getEndOfStorage(
-						instrument, Period.TICK))) {
+				|| tableIndex <= ForexDataIO.getTickTableIndex(io
+						.getEndOfStorage(instrument, Period.TICK))) {
 
 			return io.loadTickTable(instrument, tableIndex);
 
@@ -112,7 +115,8 @@ public class Provider {
 
 			try {
 
-				return history.getTicks(instrument, range.startTime, range.endTime);
+				return history.getTicks(instrument, range.startTime,
+						range.endTime);
 
 			} catch (JFException e) {
 				throw new ForexException(e.getMessage());
@@ -120,7 +124,8 @@ public class Provider {
 		}
 	}
 
-	private List<IBar> loadBarTable(Period period, OfferSide offerSide, long tableIndex) {
+	private List<IBar> loadBarTable(Period period, OfferSide offerSide,
+			long tableIndex) {
 		Instrument instrument = requester.getInstrument();
 
 		if (history == null
@@ -135,7 +140,8 @@ public class Provider {
 
 			try {
 
-				return history.getBars(instrument, period, offerSide, range.startTime,
+				return history.getBars(instrument, period, offerSide,
+						range.startTime,
 						history.getBarStart(period, range.endTime));
 
 			} catch (JFException e) {
@@ -190,8 +196,10 @@ public class Provider {
 	public ITick getPreviousTick(long time) {
 		if (time < getStartOfData(Period.TICK))
 			return null;
-		else if (time > requester.getUpperTimeLimit() || time > getEndOfData(Period.TICK))
-			time = Math.min(requester.getUpperTimeLimit(), getEndOfData(Period.TICK));
+		else if (time > requester.getUpperTimeLimit()
+				|| time > getEndOfData(Period.TICK))
+			time = Math.min(requester.getUpperTimeLimit(),
+					getEndOfData(Period.TICK));
 
 		List<ITick> ticks;
 		long tableIndex = ForexDataIO.getTickTableIndex(time);
@@ -203,7 +211,8 @@ public class Provider {
 				cacheTicks(tableIndex, ticks);
 			}
 
-			if (ticks != null && !ticks.isEmpty() && ticks.get(0).getTime() <= time) {
+			if (ticks != null && !ticks.isEmpty()
+					&& ticks.get(0).getTime() <= time) {
 
 				// check last
 				if (ticks.get(ticks.size() - 1).getTime() <= time)
@@ -230,7 +239,8 @@ public class Provider {
 	 * @return the most recent tick using the given time as current time
 	 */
 	public ITick getUpcomingTick(long time) {
-		if (time > requester.getUpperTimeLimit() || time > getEndOfData(Period.TICK))
+		if (time > requester.getUpperTimeLimit()
+				|| time > getEndOfData(Period.TICK))
 			return null;
 		else if (time < getStartOfData(Period.TICK))
 			time = getStartOfData(Period.TICK);
@@ -258,13 +268,14 @@ public class Provider {
 					}
 				}
 			}
-		} while (++tableIndex <= ForexDataIO.getTickTableIndex(getEndOfData(Period.TICK)));
+		} while (++tableIndex <= ForexDataIO
+				.getTickTableIndex(getEndOfData(Period.TICK)));
 
 		return null;
 	}
 
-	private ArrayList<ITick> loadTicks(Instrument instrument, long from, long to,
-			boolean cacheLoadedTicks) {
+	private ArrayList<ITick> loadTicks(Instrument instrument, long from,
+			long to, boolean cacheLoadedTicks) {
 		long startTableIndex = ForexDataIO.getTickTableIndex(from);
 		long endTableIndex = ForexDataIO.getTickTableIndex(to);
 
@@ -377,7 +388,8 @@ public class Provider {
 			startTime = endTime;
 		}
 
-		builder.addTicks(loadTicks(requester.getInstrument(), startTime, time, false));
+		builder.addTicks(loadTicks(requester.getInstrument(), startTime, time,
+				false));
 
 		if (builder.isOpen())
 			return builder;
@@ -427,8 +439,8 @@ public class Provider {
 		if (centerOfRequestedBars > barTimeLimit)
 			centerOfRequestedBars = barTimeLimit;
 
-		recentlyRequestedBarTable = ForexDataIO.getBarTableIndex(requester.getPeriod(),
-				centerOfRequestedBars);
+		recentlyRequestedBarTable = ForexDataIO.getBarTableIndex(
+				requester.getPeriod(), centerOfRequestedBars);
 
 		// don't provide ticks of the future
 		if (from >= barTimeLimit)
@@ -473,19 +485,21 @@ public class Provider {
 		}
 
 		List<IBar> bars;
-		long tableIndex = ForexDataIO.getBarTableIndex(requester.getPeriod(), time);
+		long tableIndex = ForexDataIO.getBarTableIndex(requester.getPeriod(),
+				time);
 		do {
 			if (barCache.containsKey(tableIndex)) {
 				bars = barCache.get(tableIndex);
 			} else {
-				bars = loadBarTable(requester.getPeriod(), requester.getOfferSide(),
-						tableIndex);
+				bars = loadBarTable(requester.getPeriod(),
+						requester.getOfferSide(), tableIndex);
 				cacheBars(tableIndex, bars);
 			}
 
 			if (bars != null
 					&& !bars.isEmpty()
-					&& bars.get(0).getTime() + requester.getPeriod().getInterval() <= time) {
+					&& bars.get(0).getTime()
+							+ requester.getPeriod().getInterval() <= time) {
 
 				// check last
 				if (bars.get(bars.size() - 1).getTime()
@@ -493,13 +507,14 @@ public class Provider {
 					return bars.get(bars.size() - 1);
 
 				for (int i = 0; i < bars.size(); i++) {
-					if (bars.get(i).getTime() + requester.getPeriod().getInterval() > time) {
+					if (bars.get(i).getTime()
+							+ requester.getPeriod().getInterval() > time) {
 						return bars.get(i - 1);
 					}
 				}
 			}
-		} while (--tableIndex >= ForexDataIO.getBarTableIndex(requester.getPeriod(),
-				getStartOfData(requester.getPeriod())));
+		} while (--tableIndex >= ForexDataIO.getBarTableIndex(
+				requester.getPeriod(), getStartOfData(requester.getPeriod())));
 
 		return null;
 	}
